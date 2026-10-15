@@ -1,4 +1,4 @@
-# 🛡️ MBA em Cibersegurança — USP/Esalq
+# 🛡️ MBA em Cibersegurança da USP/Esalq
 
 ![Status](https://img.shields.io/badge/status-em%20andamento-brightgreen)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
