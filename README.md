@@ -41,7 +41,7 @@ git clone https://github.com/luiz-henrique-dev-tech/mba-ciberseguranca.git
 cd mba-ciberseguranca/aulas/<modulo-desejado>
 ```
 
-Em seguida, siga o `README.md` daquele módulo — a maioria dos laboratórios sobe com:
+Em seguida, siga o `README.md` daquele módulo... a maioria dos laboratórios sobe com:
 
 ```bash
 docker-compose up -d --build
@@ -49,9 +49,9 @@ docker-compose up -d --build
 
 ## 🧰 Tecnologias utilizadas
 
-- **Docker / Docker Compose** — ambientes isolados e reprodutíveis para cada laboratório
-- **Linux (Kali Linux)** — sistema operacional base dos exercícios práticos
-- **Git/GitHub** — versionamento e organização do material
+- **Docker / Docker Compose** >> ambientes isolados e reprodutíveis para cada laboratório
+- **Linux (Kali Linux)** >> sistema operacional base dos exercícios práticos
+- **Git/GitHub** >> versionamento e organização do material
 
 ## 👤 Autor
 
@@ -63,4 +63,4 @@ docker-compose up -d --build
 Conteúdo produzido para fins educacionais no âmbito do MBA USP/Esalq. Sinta-se à vontade para usar como referência de estudo.
 
 ---
-*Em construção — repositório atualizado conforme avanço no curso.*
+*Repositório atualizado conforme avanço no curso.*
