@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permissão - Linux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000000;
+            color: #f5f5f7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .apple-glass {
+            background: rgba(28, 28, 30, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-row-hover:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .mono {
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Menlo, Consolas, monospace;
+        }
+
+        .gradient-text {
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <p class="text-blue-500 font-semibold tracking-wide uppercase text-s mb-2">MBA - ESALQ</p>
+            <h1 class="text-4xl md:text-5xl font-semibold gradient-text tracking-tight mb-4">Permissões no Linux</h1>
+        </header>
+
+        <!-- Table Container -->
+        <div class="apple-glass rounded-3xl overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b border-white/10">
+                    <th class="px-6 py-5 text-s font-semibold text-gray-400 uppercase tracking-wider">Simbólico</th>
+                    <th class="px-6 py-5 text-s font-semibold text-gray-400 uppercase tracking-wider">Numérico</th>
+                    <th class="px-6 py-5 text-s font-semibold text-gray-400 uppercase tracking-wider">Significado</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-6 py-5 align-top whitespace-nowrap">
+                        <span class="mono text-blue-400 font-medium bg-blue-400/10 px-2 py-1 rounded text-xl">-rwx------</span>
+                    </td>
+                    <td class="px-6 py-5 align-top">
+                        <span class="mono text-yellow-500 font-bold text-xl">700</span>
+                    </td>
+                    <td class="px-6 py-5 text-gray-300 leading-relaxed">
+                        <strong>Privado Total:</strong> Apenas o dono pode ler, editar e executar.
+                    </td>
+                </tr>
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-6 py-5 align-top whitespace-nowrap">
+                        <span class="mono text-blue-400 font-medium bg-blue-400/10 px-2 py-1 rounded text-xl">-rw-------</span>
+                    </td>
+                    <td class="px-6 py-5 align-top">
+                        <span class="mono text-yellow-500 font-bold text-xl">600</span>
+                    </td>
+                    <td class="px-6 py-5 text-gray-300 leading-relaxed">
+                        <strong>Privado:</strong> Apenas o dono pode ler e editar o arquivo.
+                    </td>
+                </tr>
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-6 py-5 align-top whitespace-nowrap">
+                        <span class="mono text-blue-400 font-medium bg-blue-400/10 px-2 py-1 rounded text-xl">-rw-r--r--</span>
+                    </td>
+                    <td class="px-6 py-5 align-top">
+                        <span class="mono text-yellow-500 font-bold text-xl">644</span>
+                    </td>
+                    <td class="px-6 py-5 text-gray-300 leading-relaxed">
+                        <strong>Público:</strong> Dono edita; grupo e outros apenas leem.
+                    </td>
+                </tr>
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-6 py-5 align-top whitespace-nowrap">
+                        <span class="mono text-blue-400 font-medium bg-blue-400/10 px-2 py-1 rounded text-xl">-rwxr-xr-x</span>
+                    </td>
+                    <td class="px-6 py-5 align-top">
+                        <span class="mono text-yellow-500 font-bold text-xl">755</span>
+                    </td>
+                    <td class="px-6 py-5 text-gray-300 leading-relaxed">
+                        <strong>Script Público:</strong> Dono total; outros podem ler e executar.
+                    </td>
+                </tr>
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-6 py-5 align-top whitespace-nowrap">
+                        <span class="mono text-blue-400 font-medium bg-blue-400/10 px-2 py-1 rounded text-xl">-rw-rw----</span>
+                    </td>
+                    <td class="px-6 py-5 align-top">
+                        <span class="mono text-yellow-500 font-bold text-xl">660</span>
+                    </td>
+                    <td class="px-6 py-5 text-gray-300 leading-relaxed">
+                        <strong>Colaborativo:</strong> Dono e grupo podem ler e editar.
+                    </td>
+                </tr>
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-6 py-5 align-top whitespace-nowrap">
+                        <span class="mono text-green-400 font-medium bg-green-400/10 px-2 py-1 rounded text-xl">drwxrwx---</span>
+                    </td>
+                    <td class="px-6 py-5 align-top">
+                        <span class="mono text-yellow-500 font-bold text-xl">770</span>
+                    </td>
+                    <td class="px-6 py-5 text-gray-300 leading-relaxed">
+                        <strong>Pasta de Grupo:</strong> Dono e grupo com controle total na pasta.
+                    </td>
+                </tr>
+                <tr class="table-row-hover transition-colors">
+                    <td class="px-6 py-5 align-top whitespace-nowrap">
+                        <span class="mono text-green-400 font-medium bg-green-400/10 px-2 py-1 rounded text-xl">drwxr-x---</span>
+                    </td>
+                    <td class="px-6 py-5 align-top">
+                        <span class="mono text-yellow-500 font-bold text-xl">750</span>
+                    </td>
+                    <td class="px-6 py-5 text-gray-300 leading-relaxed">
+                        <strong>Pasta Restrita:</strong> Grupo só pode listar e entrar na pasta.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+        <!-- Footer Info -->
+        <footer class="mt-8 text-center text-gray-500 text-m">
+            <p>Pressione <kbd class="mono bg-gray-800 px-1.5 py-0.5 rounded border border-white/10 text-gray-300">ls -l</kbd> no seu terminal para ver estes atributos.</p>
+        </footer>
+    </div>
+</body>
+</html>

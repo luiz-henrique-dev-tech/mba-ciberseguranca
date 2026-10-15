@@ -1,0 +1,240 @@
+{
+  "desafios": [
+    {
+      "id": 1,
+      "titulo": "Preparação do Servidor Web",
+      "enunciado": "Crie uma pasta chamada 'site_prod' e acesse esse diretório. Dentro dela, crie as pastas 'css', 'js' e 'imagens'. Em seguida, crie os arquivos 'index.html', 'css/style.css' e 'js/main.js'. No arquivo 'index.html', adicione o conteúdo '<h1>Bem-vindo ao novo Servidor Web!</h1>'. Por fim, defina a permissão 644 para o arquivo 'index.html'.",
+      "passos": [
+        {
+          "titulo": "Organização das Pastas",
+          "descricao": "Crie a pasta principal e as subpastas.",
+          "tipo": "comandos",
+          "conteudo": [
+            "mkdir site_prod && cd site_prod",
+            "mkdir css js imagens"
+          ]
+        },
+        {
+          "titulo": "Inicialização de Arquivos",
+          "descricao": "Crie os arquivos necessários.",
+          "tipo": "comandos",
+          "conteudo": [
+            "touch index.html css/style.css js/main.js"
+          ]
+        },
+        {
+          "titulo": "Edição do Arquivo",
+          "descricao": "Adicione conteúdo ao index.html.",
+          "tipo": "edicao",
+          "conteudo": [
+            {
+              "arquivo": "index.html",
+              "codigo": "<h1>Bem-vindo ao novo Servidor Web!</h1>"
+            }
+          ]
+        },
+        {
+          "titulo": "Permissão do Arquivo",
+          "descricao": "Defina permissão de leitura para todos e escrita apenas para o dono.",
+          "tipo": "comandos",
+          "conteudo": [
+            "chmod 644 index.html"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "titulo": "Análise de Logs",
+      "enunciado": "Crie uma pasta chamada 'analise_incidente' e acesse-a. Dentro dela, crie o arquivo 'auth.log'. No arquivo, adicione três linhas: '[INFO] User Admin logged in', '[ERROR] Failed password for root from IP 192.168.1.53' e outra linha igual de erro. Em seguida, filtre todas as linhas que contêm 'ERROR' e salve em 'invasoes_registradas.txt'. Por fim, aplique permissão 600 nesse novo arquivo.",
+      "passos": [
+        {
+          "titulo": "Criação do Ambiente",
+          "descricao": "Crie pasta e arquivo de log.",
+          "tipo": "comandos",
+          "conteudo": [
+            "mkdir analise_incidente && cd analise_incidente",
+            "touch auth.log"
+          ]
+        },
+        {
+          "titulo": "Inserção de Conteúdo",
+          "descricao": "Adicione dados ao log.",
+          "tipo": "edicao",
+          "conteudo": [
+            {
+              "arquivo": "auth.log",
+              "codigo": "[INFO] User Admin logged in\n[ERROR] Failed password for root from IP 192.168.1.53\n[ERROR] Failed password for root from IP 192.168.1.53"
+            }
+          ]
+        },
+        {
+          "titulo": "Filtragem",
+          "descricao": "Filtre linhas com erro.",
+          "tipo": "comandos",
+          "conteudo": [
+            "grep \"ERROR\" auth.log > invasoes_registradas.txt"
+          ]
+        },
+        {
+          "titulo": "Permissão Restrita",
+          "descricao": "Restrinja o acesso ao arquivo.",
+          "tipo": "comandos",
+          "conteudo": [
+            "chmod 600 invasoes_registradas.txt"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "titulo": "Backup de Arquivos",
+      "enunciado": "Crie uma pasta chamada 'db_data'. Dentro dela, crie os arquivos 'clientes.sql' e 'vendas.sql'. Em seguida, compacte a pasta 'db_data' em um arquivo chamado 'backup_semanal.tar.gz'. Depois, aplique permissão 400 nesse arquivo compactado. Por fim, remova completamente a pasta 'db_data'.",
+      "passos": [
+        {
+          "titulo": "Criação de Arquivos",
+          "descricao": "Crie pasta e arquivos.",
+          "tipo": "comandos",
+          "conteudo": [
+            "mkdir db_data",
+            "touch db_data/clientes.sql db_data/vendas.sql"
+          ]
+        },
+        {
+          "titulo": "Compactação",
+          "descricao": "Crie o arquivo compactado.",
+          "tipo": "comandos",
+          "conteudo": [
+            "tar -czvf backup_semanal.tar.gz db_data/"
+          ]
+        },
+        {
+          "titulo": "Permissão do Backup",
+          "descricao": "Restrinja o acesso ao arquivo.",
+          "tipo": "comandos",
+          "conteudo": [
+            "chmod 400 backup_semanal.tar.gz"
+          ]
+        },
+        {
+          "titulo": "Remoção",
+          "descricao": "Apague a pasta original.",
+          "tipo": "comandos",
+          "conteudo": [
+            "rm -rf db_data/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "titulo": "Chaves SSH",
+      "enunciado": "Crie o diretório '~/.ssh' e acesse-o. Gere um par de chaves SSH do tipo ed25519 com o nome 'aws_prod_key' e sem senha. Em seguida, aplique permissão 600 ao arquivo 'aws_prod_key'. Por fim, exiba o conteúdo do arquivo 'aws_prod_key.pub'.",
+      "passos": [
+        {
+          "titulo": "Diretório SSH",
+          "descricao": "Crie e acesse o diretório.",
+          "tipo": "comandos",
+          "conteudo": [
+            "mkdir -p ~/.ssh && cd ~/.ssh"
+          ]
+        },
+        {
+          "titulo": "Geração de Chaves",
+          "descricao": "Crie o par de chaves.",
+          "tipo": "comandos",
+          "conteudo": [
+            "ssh-keygen -t ed25519 -f aws_prod_key -N \"\""
+          ]
+        },
+        {
+          "titulo": "Permissão",
+          "descricao": "Restrinja a chave privada.",
+          "tipo": "comandos",
+          "conteudo": [
+            "chmod 600 aws_prod_key"
+          ]
+        },
+        {
+          "titulo": "Exibição",
+          "descricao": "Mostre a chave pública.",
+          "tipo": "comandos",
+          "conteudo": [
+            "cat aws_prod_key.pub"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "titulo": "Processos em Segundo Plano",
+      "enunciado": "Execute o comando 'sleep 3600' em segundo plano. Em seguida, liste os processos em execução e identifique o processo 'sleep'. Por fim, encerre todos os processos com esse nome utilizando um comando de finalização forçada.",
+      "passos": [
+        {
+          "titulo": "Execução",
+          "descricao": "Execute em background.",
+          "tipo": "comandos",
+          "conteudo": [
+            "sleep 3600 &"
+          ]
+        },
+        {
+          "titulo": "Listagem",
+          "descricao": "Localize o processo.",
+          "tipo": "comandos",
+          "conteudo": [
+            "ps aux | grep sleep"
+          ]
+        },
+        {
+          "titulo": "Finalização",
+          "descricao": "Encerre o processo.",
+          "tipo": "comandos",
+          "conteudo": [
+            "killall -9 sleep"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "titulo": "Scripts e Atalhos",
+      "enunciado": "Crie uma pasta chamada 'scripts_internos' e acesse-a. Dentro dela, crie o arquivo 'build_app_final.sh'. Torne esse arquivo executável. Em seguida, crie um link simbólico chamado 'atalho_builder' no diretório pai apontando para esse script. Por fim, crie um alias chamado 'rodar_tudo' que execute esse atalho.",
+      "passos": [
+        {
+          "titulo": "Criação do Script",
+          "descricao": "Crie pasta e arquivo.",
+          "tipo": "comandos",
+          "conteudo": [
+            "mkdir scripts_internos && cd scripts_internos",
+            "touch build_app_final.sh"
+          ]
+        },
+        {
+          "titulo": "Permissão",
+          "descricao": "Torne executável.",
+          "tipo": "comandos",
+          "conteudo": [
+            "chmod +x build_app_final.sh"
+          ]
+        },
+        {
+          "titulo": "Link Simbólico",
+          "descricao": "Crie o atalho.",
+          "tipo": "comandos",
+          "conteudo": [
+            "ln -s ~/scripts_internos/build_app_final.sh ../atalho_builder"
+          ]
+        },
+        {
+          "titulo": "Alias",
+          "descricao": "Crie o alias.",
+          "tipo": "comandos",
+          "conteudo": [
+            "alias rodar_tudo=\"../atalho_builder\""
+          ]
+        }
+      ]
+    }
+  ]
+}

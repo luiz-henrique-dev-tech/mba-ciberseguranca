@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBA ESALQ - Linux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass {
+            background: rgba(28, 28, 30, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .command-card {
+            background-color: #1c1c1e;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .command-card:hover {
+            background-color: #2c2c2e;
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(59, 130, 246, 0.2);
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .code-block {
+            background-color: rgba(0, 0, 0, 0.3);
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body class="selection:bg-blue-500/30">
+
+    <!-- Apple-style Navigation -->
+    <nav class="sticky top-0 z-50 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i data-lucide="terminal" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="font-bold tracking-tight text-xl hidden sm:block">MBA<span class="text-blue-500">ESALQ</span></span>Comandos no Linux
+            </div>
+            
+            <div class="relative w-full max-w-md ml-4">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Procurar comando ou ação..." 
+                    class="search-input w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-gray-600 text-white"
+                >
+            </div>
+
+            <div class="flex gap-4 ml-4"></div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="py-16 px-6 text-center max-w-4xl mx-auto">
+        <h1 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">
+            Manual de Comandos Linux
+        </h1>
+        <p class="text-lg text-gray-400 font-medium">
+            Explore os comandos essenciais para dominar o sistema.
+        </p>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="max-w-7xl mx-auto px-6 pb-32">
+        <div id="commandsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Cards will be injected here by JS -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden py-20 text-center">
+            <div class="bg-white/5 inline-flex p-6 rounded-full mb-4">
+                <i data-lucide="search-x" class="w-8 h-8 text-gray-600"></i>
+            </div>
+            <h3 class="text-xl font-medium text-gray-400">Nenhum comando encontrado</h3>
+            <p class="text-gray-600">Tente ajustar os termos da sua pesquisa.</p>
+        </div>
+    </main>
+
+    <!-- Dock Style Footer -->
+    <footer class="fixed bottom-8 left-1/2 -translate-x-1/2 glass px-8 py-3 rounded-full flex items-center gap-6 shadow-2xl z-50">
+        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span id="commandCount">0</span> Comandos
+        </div>
+        <div class="h-4 w-[1px] bg-white/10"></div>
+        <div class="flex gap-4">
+            <a href="#" class="text-[10px] text-gray-400 hover:text-white transition-colors">Documentação</a>
+            <a href="#" class="text-[10px] text-gray-400 hover:text-white transition-colors">GitHub</a>
+        </div>
+    </footer>
+
+    <script>
+        const commandsData = [
+            { id: 1, action: "Listar ficheiros e diretórios", command: "ls", example: "ls -la", category: "Navegação" },
+            { id: 2, action: "Mudar de diretório", command: "cd", example: "cd /home/usuario/docs", category: "Navegação" },
+            { id: 3, action: "Mostrar diretório atual", command: "pwd", example: "pwd", category: "Navegação" },
+            { id: 4, action: "Criar um novo diretório", command: "mkdir", example: "mkdir novo_projeto", category: "Arquivos" },
+            { id: 5, action: "Remover ficheiros/pastas", command: "rm", example: "rm -rf pasta_antiga", category: "Arquivos" },
+            { id: 6, action: "Copiar ficheiros ou pastas", command: "cp", example: "cp arq.txt backup/", category: "Arquivos" },
+            { id: 7, action: "Mover ou renomear", command: "mv", example: "mv old.txt new.txt", category: "Arquivos" },
+            { id: 8, action: "Criar um ficheiro vazio", command: "touch", example: "touch notas.txt", category: "Arquivos" },
+            { id: 9, action: "Exibir conteúdo de ficheiro", command: "cat", example: "cat config.conf", category: "Leitura" },
+            { id: 10, action: "Pesquisar texto em ficheiros", command: "grep", example: "grep 'erro' logs.txt", category: "Leitura" },
+            { id: 11, action: "Localizar ficheiros", command: "find", example: "find / -name 'foto.jpg'", category: "Navegação" },
+            { id: 12, action: "Alterar permissões", command: "chmod", example: "chmod +x script.sh", category: "Permissões" },
+            { id: 13, action: "Alterar dono do ficheiro", command: "chown", example: "chown root:root arq.txt", category: "Permissões" },
+            { id: 14, action: "Executar como superusuário", command: "sudo", example: "sudo apt update", category: "Sistema" },
+            { id: 15, action: "Gerenciar pacotes (APT)", command: "apt", example: "sudo apt install git", category: "Sistema" },
+            { id: 16, action: "Espaço livre em disco", command: "df", example: "df -h", category: "Sistema" },
+            { id: 17, action: "Uso de disco por pasta", command: "du", example: "du -sh *", category: "Sistema" },
+            { id: 18, action: "Processos em tempo real", command: "top", example: "top", category: "Monitoramento" },
+            { id: 19, action: "Listar processos ativos", command: "ps", example: "ps aux", category: "Monitoramento" },
+            { id: 20, action: "Encerrar um processo", command: "kill", example: "kill -9 1234", category: "Monitoramento" },
+            { id: 21, action: "Testar conexão de rede", command: "ping", example: "ping google.com", category: "Rede" },
+            { id: 22, action: "Acesso remoto (SSH)", command: "ssh", example: "ssh user@192.168.1.1", category: "Rede" },
+            { id: 23, action: "Copiar via rede", command: "scp", example: "scp arq.zip user@host:/path", category: "Rede" },
+            { id: 24, action: "Baixar ficheiros da web", command: "wget", example: "wget https://site.com/f.zip", category: "Rede" },
+            { id: 25, action: "Transferir dados via URL", command: "curl", example: "curl -I google.com", category: "Rede" },
+            { id: 26, action: "Compactar/Descompactar", command: "tar", example: "tar -cvzf backup.tar.gz .", category: "Arquivos" },
+            { id: 27, action: "Criar arquivo .zip", command: "zip", example: "zip -r docs.zip docs/", category: "Arquivos" },
+            { id: 28, action: "Extrair arquivo .zip", command: "unzip", example: "unzip arquivo.zip", category: "Arquivos" },
+            { id: 29, action: "Manual de instruções", command: "man", example: "man grep", category: "Ajuda" },
+            { id: 30, action: "Histórico de comandos", command: "history", example: "history | grep ssh", category: "Sistema" },
+            { id: 31, action: "Criar atalhos (Alias)", command: "alias", example: "alias ll='ls -la'", category: "Sistema" },
+            { id: 32, action: "Variáveis de ambiente", command: "export", example: "export PATH=$PATH:/bin", category: "Sistema" },
+            { id: 33, action: "Imprimir texto no terminal", command: "echo", example: "echo 'Olá Mundo'", category: "Leitura" },
+            { id: 34, action: "Ver as primeiras linhas", command: "head", example: "head -n 5 file.txt", category: "Leitura" },
+            { id: 35, action: "Ver as últimas linhas", command: "tail", example: "tail -f access.log", category: "Leitura" },
+            { id: 36, action: "Comparar dois ficheiros", command: "diff", example: "diff f1.txt f2.txt", category: "Leitura" },
+            { id: 37, action: "Linhas únicas", command: "uniq", example: "sort f.txt | uniq", category: "Leitura" },
+            { id: 38, action: "Ordenar linhas", command: "sort", example: "sort lista.txt", category: "Leitura" },
+            { id: 39, action: "Contar palavras/linhas", command: "wc", example: "wc -l texto.txt", category: "Leitura" },
+            { id: 40, action: "Editor de fluxo (SED)", command: "sed", example: "sed 's/a/b/g' f.txt", category: "Arquivos" },
+            { id: 41, action: "Processador de texto (AWK)", command: "awk", example: "awk '{print $1}' log.txt", category: "Leitura" },
+            { id: 42, action: "Editor simples (Nano)", command: "nano", example: "nano config.json", category: "Arquivos" },
+            { id: 43, action: "Editor avançado (Vim)", command: "vim", example: "vim script.py", category: "Arquivos" },
+            { id: 44, action: "Gerenciar serviços", command: "systemctl", example: "sudo systemctl status ssh", category: "Sistema" },
+            { id: 45, action: "Ver logs do sistema", command: "journalctl", example: "journalctl -xe", category: "Sistema" },
+            { id: 46, action: "Informações do Kernel", command: "uname", example: "uname -a", category: "Sistema" },
+            { id: 47, action: "Nome do host", command: "hostname", example: "hostname -I", category: "Rede" },
+            { id: 48, action: "Configuração de IP (Novo)", command: "ip", example: "ip addr show", category: "Rede" },
+        ];
+
+        const getCategoryIcon = (category) => {
+            const icons = {
+                'Navegação': 'chevron-right',
+                'Arquivos': 'folder',
+                'Leitura': 'file-code',
+                'Permissões': 'shield',
+                'Sistema': 'activity',
+                'Rede': 'globe',
+                'default': 'hash'
+            };
+            return icons[category] || icons.default;
+        };
+
+        const copyToClipboard = (text, button) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            const icon = button.querySelector('i');
+            const originalIcon = icon.getAttribute('data-lucide');
+            
+            icon.setAttribute('data-lucide', 'check');
+            icon.classList.add('text-green-400');
+            lucide.createIcons();
+
+            setTimeout(() => {
+                icon.setAttribute('data-lucide', originalIcon);
+                icon.classList.remove('text-green-400');
+                lucide.createIcons();
+            }, 2000);
+        };
+
+        const renderCards = (data) => {
+            const grid = document.getElementById('commandsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const countLabel = document.getElementById('commandCount');
+            
+            grid.innerHTML = '';
+            countLabel.textContent = data.length;
+
+            if (data.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'command-card group relative flex flex-col border border-white/5 rounded-2xl p-5';
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-[10px] uppercase tracking-widest text-blue-400 font-bold px-2 py-1 bg-blue-500/10 rounded-full flex items-center gap-1">
+                            <i data-lucide="${getCategoryIcon(item.category)}" class="w-3 h-3"></i>
+                            ${item.category}
+                        </span>
+                        <button onclick="copyToClipboard('${item.example}', this)" class="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    
+                    <h3 class="text-gray-400 text-sm font-medium mb-1">${item.action}</h3>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="terminal" class="w-5 h-5 text-blue-500"></i>
+                        <code class="text-white text-lg font-bold font-mono">${item.command}</code>
+                    </div>
+
+                    <div class="mt-auto code-block rounded-lg p-3 relative overflow-hidden">
+                        <div class="text-[9px] text-gray-500 font-mono mb-1 uppercase tracking-tighter">Exemplo de uso</div>
+                        <code class="text-blue-300 text-xs font-mono break-all">${item.example}</code>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        };
+
+        // Initialize and Search Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards(commandsData);
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = commandsData.filter(cmd => 
+                    cmd.command.toLowerCase().includes(term) || 
+                    cmd.action.toLowerCase().includes(term) ||
+                    cmd.category.toLowerCase().includes(term)
+                );
+                renderCards(filtered);
+            });
+        });
+    </script>
+</body>
+</html>

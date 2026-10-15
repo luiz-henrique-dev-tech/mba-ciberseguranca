@@ -1,0 +1,10 @@
+services:
+  linux-env:
+    build: .
+    container_name: linux
+    # Mapeia o diretório atual da sua máquina (/Users/guilhermelima/Desktop/aula-linux) para /workspace dentro do container
+    volumes:
+      - .:/workspace
+    # Definindo um tty e stdin_open evita que o container morra inesperadamente se o comando principal terminar
+    tty: true
+    stdin_open: true

@@ -1,0 +1,20 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editores / IDEs
+.vscode/
+.idea/
+
+# Variáveis de ambiente e segredos
+.env
+*.env.local
+
+# Dependências (caso alguma aula use Node/Python)
+node_modules/
+__pycache__/
+*.pyc
+venv/
+
+# Docker
+*.log
