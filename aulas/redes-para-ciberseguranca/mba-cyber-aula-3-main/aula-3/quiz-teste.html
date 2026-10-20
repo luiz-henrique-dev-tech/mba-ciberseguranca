@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBA USP ESALQ · Quiz · Aula 3 (Redes)</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;600;700&display=swap');
+
+        :root {
+            --terminal-bg: #1e1e1e;
+            --accent: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .terminal-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .step-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-card.active {
+            border-left: 4px solid var(--accent);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .command-block {
+            background: var(--terminal-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow-x: auto;
+            padding-right: 2.75rem;
+        }
+
+        .command-block:hover .copy-icon {
+            opacity: 1;
+        }
+
+        .copy-icon {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .output-block {
+            background: #0b1120;
+            border: 1px dashed #334155;
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Cabeçalho -->
+        <header class="mb-10 text-center md:text-left">
+            <p class="text-emerald-500 font-bold tracking-widest text-sm mb-1">AULA 3 · REDES DE COMPUTADORES</p>
+            <h1 class="text-4xl font-bold text-white mb-2" id="challenge-title">
+                <i class="fa-solid fa-network-wired text-emerald-500 mr-3"></i>
+                Quiz · MBA USP ESALQ
+            </h1>
+            <p class="text-slate-400 text-lg" id="challenge-desc">Escolha um desafio para começar.</p>
+
+            <!-- Botão de passo a passo -->
+            <div class="mt-8">
+                <button id="reveal-btn"
+                    class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-emerald-900/20 transition-all flex items-center mx-auto md:mx-0 group">
+                    <i class="fa-solid fa-play-circle mr-2 group-hover:scale-110 transition-transform"></i>
+                    Ver o passo a passo
+                </button>
+                <p class="text-slate-500 text-sm mt-3">
+                    <i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i>
+                    Tente resolver sozinho primeiro. Clique no botão para revelar a solução, uma etapa por vez.
+                </p>
+            </div>
+        </header>
+
+        <!-- Navegação de Desafios -->
+        <nav id="activities-nav" class="flex overflow-x-auto gap-4 mb-8 pb-4 border-b border-slate-700/50"
+            style="scrollbar-width: thin; scrollbar-color: #475569 transparent;"></nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Sidebar: Guia Rápido -->
+            <aside class="space-y-6 lg:order-last">
+                <div class="glass-panel rounded-xl p-6 shadow-xl">
+                    <h2 class="text-xl font-semibold mb-4 text-emerald-400 border-b border-slate-700 pb-2">
+                        <i class="fa-solid fa-terminal mr-2"></i>Comandos de rede
+                    </h2>
+                    <ul class="space-y-3 text-sm terminal-font">
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">Qual o meu IP</span> <span class="text-white font-bold">hostname -I</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">IP de um nome</span> <span class="text-white font-bold">dig +short</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">O site responde?</span> <span class="text-white font-bold">ping -c 4</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">A porta atende?</span> <span class="text-white font-bold">nc -zv</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">Por onde eu saio</span> <span class="text-white font-bold">ip r</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">O caminho</span> <span class="text-white font-bold">traceroute</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">De quem é o IP</span> <span class="text-white font-bold">whois</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">Resposta do site</span> <span class="text-white font-bold">curl -I</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">Quem escuta aqui</span> <span class="text-white font-bold">ss -tuln</span></li>
+                        <li class="flex justify-between gap-2"><span class="text-slate-400">Portas abertas</span> <span class="text-emerald-400 font-bold">nmap</span></li>
+                    </ul>
+                </div>
+
+                <div class="glass-panel rounded-xl p-6 shadow-xl">
+                    <h2 class="text-xl font-semibold mb-4 text-emerald-400 border-b border-slate-700 pb-2">
+                        <i class="fa-solid fa-plug mr-2"></i>Portas e status
+                    </h2>
+                    <div class="grid grid-cols-2 gap-2 text-xs terminal-font mb-4">
+                        <div class="bg-slate-800 p-2 rounded text-center"><span class="block text-emerald-400 font-bold">443</span> HTTPS</div>
+                        <div class="bg-slate-800 p-2 rounded text-center"><span class="block text-emerald-400 font-bold">80</span> HTTP</div>
+                        <div class="bg-slate-800 p-2 rounded text-center"><span class="block text-emerald-400 font-bold">53</span> DNS</div>
+                        <div class="bg-slate-800 p-2 rounded text-center"><span class="block text-emerald-400 font-bold">22</span> SSH</div>
+                    </div>
+                    <div class="space-y-2 text-xs terminal-font">
+                        <div class="flex justify-between"><span class="text-emerald-400 font-bold">200</span><span class="text-slate-400">deu certo</span></div>
+                        <div class="flex justify-between"><span class="text-sky-400 font-bold">301</span><span class="text-slate-400">mudou de endereço</span></div>
+                        <div class="flex justify-between"><span class="text-amber-400 font-bold">403</span><span class="text-slate-400">recusou o pedido</span></div>
+                        <div class="flex justify-between"><span class="text-red-400 font-bold">404</span><span class="text-slate-400">não existe</span></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl p-5 shadow-xl border-l-4 border-amber-500">
+                    <p class="text-sm text-slate-300"><i class="fa-solid fa-triangle-exclamation text-amber-400 mr-2"></i>
+                        O desafio 6 usa o <b>laboratório fechado</b> (rede sem internet). Só escaneie a sua própria
+                        <span class="terminal-font">vitima</span>. Escanear sistemas de terceiros sem autorização pode configurar crime e viola termos de uso.</p>
+                </div>
+            </aside>
+
+            <!-- Conteúdo Principal -->
+            <div class="lg:col-span-2 space-y-6 lg:order-first" id="challenge-container">
+                <!-- injetado dinamicamente -->
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-slate-600 text-sm">
+            Redes para Cibersegurança I · MBA USP ESALQ · Aula 3
+        </footer>
+    </div>
+
+    <!-- Toast de Cópia -->
+    <div id="toast"
+        class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 border border-emerald-500 px-6 py-3 rounded-full shadow-2xl opacity-0 transition-opacity pointer-events-none text-white z-50">
+        Comando copiado!
+    </div>
+
+    <script>
+        // =====================================================================
+        //  Dados dos 6 desafios da Aula 3 (1 a 5 no Kali da Parte 1; 6 no laboratório fechado da Parte 2)
+        //  tipo de passo: "comandos" | "edicao" | "saida" | "nota"
+        // =====================================================================
+        const DESAFIOS = [
+            {
+                id: 1,
+                titulo: "DNS — qual é o endereço do site?",
+                icone: "fa-signs-post",
+                enunciado: "Você vai digitar <b>www.nba.com</b>, mas o computador precisa de um número. Descubra: (1) o endereço IP do www.nba.com, (2) quantos apelidos (CNAME) existem entre o nome e o IP e (3) qual servidor DNS respondeu a sua pergunta.",
+                passos: [
+                    {
+                        titulo: "Quem é o meu servidor DNS?",
+                        descricao: "O Linux guarda o endereço do seu DNS neste arquivo.",
+                        tipo: "comandos",
+                        conteudo: ["cat /etc/resolv.conf"]
+                    },
+                    {
+                        titulo: "A pergunta mais simples: host",
+                        descricao: "Traduza o nome em endereço. Repare nas linhas 'is an alias for' (os apelidos).",
+                        tipo: "comandos",
+                        conteudo: ["host www.nba.com"]
+                    },
+                    {
+                        titulo: "A ferramenta de investigação: dig",
+                        descricao: "Leia a seção ANSWER: cada apelido (CNAME) e, no fim, o IP (registro A).",
+                        tipo: "comandos",
+                        conteudo: ["dig www.nba.com"]
+                    },
+                    {
+                        titulo: "Só a resposta",
+                        descricao: "O +short tira tudo e deixa apenas os apelidos e o IP.",
+                        tipo: "comandos",
+                        conteudo: ["dig +short www.nba.com"]
+                    },
+                    {
+                        titulo: "O que você deve ver",
+                        descricao: "Dois apelidos da Akamai (uma CDN) e, por último, o IP. O número vai variar.",
+                        tipo: "saida",
+                        conteudo: ["www.nba.com-v1.edgekey.net.\ne8017.dscb.akamaiedge.net.\n23.201.217.31"]
+                    },
+                    {
+                        titulo: "Resposta do desafio",
+                        descricao: "Compare com o que você anotou.",
+                        tipo: "nota",
+                        conteudo: ["IP (varia): 23.201.217.31 · Apelidos (CNAME): 2 · Quem respondeu: o 'nameserver' do /etc/resolv.conf (no contêiner, 127.0.0.11, o DNS do Docker)."]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                titulo: "TCP/IP — a conversa com o servidor",
+                icone: "fa-plug-circle-check",
+                enunciado: "Prove que o seu Kali consegue abrir uma conversa com o servidor da NBA. Descubra: (1) o seu próprio IP, (2) se a porta 443 (HTTPS) da NBA responde e (3) mostre a conexão aberta, com o seu IP e porta de um lado e o IP da NBA na porta 443 do outro.",
+                passos: [
+                    {
+                        titulo: "Qual é o meu IP?",
+                        descricao: "O IP do contêiner na rede, e as placas de rede em uma linha cada.",
+                        tipo: "comandos",
+                        conteudo: ["hostname -I", "ip -br a"]
+                    },
+                    {
+                        titulo: "A porta 443 atende?",
+                        descricao: "-z só testa (sem enviar dados), -v mostra o resultado. 'succeeded' = o aperto de mão TCP deu certo.",
+                        tipo: "comandos",
+                        conteudo: ["nc -zv www.nba.com 443"]
+                    },
+                    {
+                        titulo: "Abrir a conexão (Terminal 1)",
+                        descricao: "O cursor fica parado: a conexão está aberta, esperando. Deixe assim e abra outro terminal no seu computador com docker exec -it linux bash.",
+                        tipo: "comandos",
+                        conteudo: ["nc www.nba.com 443"]
+                    },
+                    {
+                        titulo: "Ver a conversa acontecendo (Terminal 2)",
+                        descricao: "Liste as conexões TCP. ESTAB = estabelecida. Se não aparecer, o servidor pode ter encerrado a conexão parada: rode o nc de novo no Terminal 1 e o ss logo em seguida.",
+                        tipo: "comandos",
+                        conteudo: ["ss -tn"]
+                    },
+                    {
+                        titulo: "O que você deve ver",
+                        descricao: "Seu IP e uma porta sorteada → o IP da NBA na porta 443.",
+                        tipo: "saida",
+                        conteudo: ["ESTAB  0  0  172.23.0.2:57364  23.201.217.31:443"]
+                    },
+                    {
+                        titulo: "Resposta do desafio",
+                        descricao: "Toda conversa TCP tem 4 números: meu IP:porta ↔ IP do servidor:porta.",
+                        tipo: "nota",
+                        conteudo: ["Seu IP: o que apareceu no hostname -I · Porta 443: succeeded · Conexão: seu_IP:porta → IP_da_NBA:443 (ESTAB). Feche com Ctrl+C no Terminal 1."]
+                    }
+                ]
+            },
+            {
+                id: 3,
+                titulo: "Roteadores — o caminho até a NBA",
+                icone: "fa-route",
+                enunciado: "Os pacotes não vão direto: passam por vários roteadores. Descubra: (1) o IP do seu gateway (a porta de saída da rede), (2) a lista de saltos (roteadores) até o www.nba.com e (3) de quem é a rede do IP de destino.",
+                passos: [
+                    {
+                        titulo: "Qual é o meu gateway?",
+                        descricao: "A linha 'default via' aponta o primeiro roteador do caminho.",
+                        tipo: "comandos",
+                        conteudo: ["ip r"]
+                    },
+                    {
+                        titulo: "O caminho, salto por salto",
+                        descricao: "Cada linha é um roteador. -m 15 limita a 15 saltos para não esperar demais. Se aparecerem só asteriscos depois do primeiro salto (pode acontecer no Docker Desktop), rode tracert www.nba.com no Prompt de Comando do Windows ou traceroute no Terminal do Mac.",
+                        tipo: "comandos",
+                        conteudo: ["traceroute -m 15 www.nba.com"]
+                    },
+                    {
+                        titulo: "De quem é o IP de destino?",
+                        descricao: "Troque 23.201.217.31 pelo IP que o seu dig/ping mostrou. O | grep filtra só as linhas úteis.",
+                        tipo: "comandos",
+                        conteudo: ["whois 23.201.217.31 | grep -iE \"^(NetName|OrgName|Country):\""]
+                    },
+                    {
+                        titulo: "O que você deve ver",
+                        descricao: "Os primeiros saltos são a sua rede e o provedor; o destino pertence à Akamai.",
+                        tipo: "saida",
+                        conteudo: ["NetName:  AKAMAI\nOrgName:  Akamai Technologies, Inc.\nCountry:  US"]
+                    },
+                    {
+                        titulo: "Resposta do desafio",
+                        descricao: "A rede é americana, mas o ping é baixo (~6 ms): o servidor está perto, no Brasil. É a CDN.",
+                        tipo: "nota",
+                        conteudo: ["Gateway: o 'default via' do ip r (no contêiner, 172.23.0.1) · Saltos: sua rede → provedor (Vivo) → redes internacionais → Akamai · Dono do IP: Akamai Technologies."]
+                    }
+                ]
+            },
+            {
+                id: 4,
+                titulo: "HTTP e HTTPS — a resposta do servidor",
+                icone: "fa-lock",
+                enunciado: "Converse com o servidor da NBA pelo terminal. Descubra: (1) o código de status que a NBA responde ao curl, (2) como conseguir uma resposta 200 e (3) quem emitiu o certificado do site.",
+                passos: [
+                    {
+                        titulo: "O primeiro pedido",
+                        descricao: "-I pede só os cabeçalhos. Repare no código de status na 1ª linha.",
+                        tipo: "comandos",
+                        conteudo: ["curl -I https://www.nba.com"]
+                    },
+                    {
+                        titulo: "Com cara de navegador",
+                        descricao: "O servidor barra o curl como robô pelo User-Agent. -A troca essa identificação.",
+                        tipo: "comandos",
+                        conteudo: ["curl -I -A \"Mozilla/5.0\" https://www.nba.com"]
+                    },
+                    {
+                        titulo: "E sem o 's' (http)?",
+                        descricao: "O servidor não aceita conversa sem cadeado: manda você para o https.",
+                        tipo: "comandos",
+                        conteudo: ["curl -I -A \"Mozilla/5.0\" http://www.nba.com"]
+                    },
+                    {
+                        titulo: "O raio-x: quem garantiu o certificado?",
+                        descricao: "Procure as linhas 'subject' (para quem) e 'issuer' (quem garantiu).",
+                        tipo: "comandos",
+                        conteudo: ["curl -v -I -A \"Mozilla/5.0\" https://www.nba.com"]
+                    },
+                    {
+                        titulo: "O que você deve ver",
+                        descricao: "403 no 1º pedido, 200 com o User-Agent, 301 pelo http, e o emissor no raio-x.",
+                        tipo: "saida",
+                        conteudo: ["curl -I            -> HTTP/2 403\ncurl -I -A ...     -> HTTP/2 200\nhttp:// -A ...     -> 301 (Location: https://...)\nissuer: ... DigiCert Inc ... GeoTrust TLS RSA CA G1"]
+                    },
+                    {
+                        titulo: "Resposta do desafio",
+                        descricao: "O cadeado prova o nome e a criptografia — não a honestidade do site.",
+                        tipo: "nota",
+                        conteudo: ["1ª resposta: 403 (curl barrado como robô) · 200: com -A \"Mozilla/5.0\" · Certificado de *.nba.com, emitido pela DigiCert (GeoTrust)."]
+                    }
+                ]
+            },
+            {
+                id: 5,
+                titulo: "Cliente-servidor: o seu Kali vira servidor",
+                icone: "fa-server",
+                enunciado: "Até aqui o Kali só pediu. Agora ele vai responder. Descubra: (1) a sua página aparecendo no curl, (2) o registro (log) do pedido no terminal do servidor e (3) o pedido cru que o curl manda, com o User-Agent. Use <b>dois terminais</b> do Kali.",
+                passos: [
+                    {
+                        titulo: "Crie a sua página (Terminal 1)",
+                        descricao: "Uma pasta só para o site e uma página simples.",
+                        tipo: "comandos",
+                        conteudo: ["mkdir -p /tmp/site && cd /tmp/site", "echo '<h1>Servidor do Kali</h1>' > index.html"]
+                    },
+                    {
+                        titulo: "Ligue o servidor (Terminal 1)",
+                        descricao: "O terminal fica preso, mostrando o registro dos pedidos. Deixe assim e abra outro terminal no seu computador com docker exec -it linux bash.",
+                        tipo: "comandos",
+                        conteudo: ["python3 -m http.server 8000"]
+                    },
+                    {
+                        titulo: "Quem está escutando? (Terminal 2)",
+                        descricao: "Procure a porta 8000 em LISTEN: é o seu servidor esperando pedidos.",
+                        tipo: "comandos",
+                        conteudo: ["ss -tuln"]
+                    },
+                    {
+                        titulo: "Acesse a sua página (Terminal 2)",
+                        descricao: "-i mostra os cabeçalhos e a página. O acesso é por aqui, dentro do Kali: o navegador do seu computador não alcança o contêiner. Depois, olhe o Terminal 1.",
+                        tipo: "comandos",
+                        conteudo: ["curl -i http://127.0.0.1:8000"]
+                    },
+                    {
+                        titulo: "O que você deve ver",
+                        descricao: "No Terminal 2, a resposta do servidor; no Terminal 1, uma linha nova no registro.",
+                        tipo: "saida",
+                        conteudo: ["HTTP/1.0 200 OK\nServer: SimpleHTTP/0.6 Python/3.x\n...\n<h1>Servidor do Kali</h1>\n\nno Terminal 1:\n127.0.0.1 - - [data e hora] \"GET / HTTP/1.1\" 200 -"]
+                    },
+                    {
+                        titulo: "Um servidor falso (Terminal 1)",
+                        descricao: "Pare o servidor com Ctrl+C. O nc vai escutar a porta 8080 e mostrar tudo o que chegar, sem responder.",
+                        tipo: "comandos",
+                        conteudo: ["nc -l 8080"]
+                    },
+                    {
+                        titulo: "Mande o pedido (Terminal 2)",
+                        descricao: "O curl fica esperando uma resposta que não vem. Olhe o Terminal 1 e depois encerre os dois com Ctrl+C.",
+                        tipo: "comandos",
+                        conteudo: ["curl http://127.0.0.1:8080"]
+                    },
+                    {
+                        titulo: "O que você deve ver (Terminal 1)",
+                        descricao: "O pedido exatamente como o curl mandou.",
+                        tipo: "saida",
+                        conteudo: ["GET / HTTP/1.1\nHost: 127.0.0.1:8080\nUser-Agent: curl/8.x\nAccept: */*"]
+                    },
+                    {
+                        titulo: "Resposta do desafio",
+                        descricao: "Logs são a matéria-prima de uma investigação.",
+                        tipo: "nota",
+                        conteudo: ["Página: o HTML que o curl mostrou · Registro: quem pediu (127.0.0.1), quando, GET / e o código 200 · Pedido cru: Host e User-Agent: curl/... É esse User-Agent que a NBA barrou no Desafio 4, e ele é só uma declaração: pode ser falso."]
+                    }
+                ]
+            },
+            {
+                id: 6,
+                titulo: "Reconhecimento no laboratório (defesa)",
+                icone: "fa-shield-halved",
+                enunciado: "No <b>laboratório fechado</b> (rede sem internet), descubra o que o IP da sua 'vítima' revela: (1) quais portas estão abertas, (2) qual software roda em cada uma e (3) a marca do scan no log da vítima. Por fim, feche uma porta e veja a diferença. Só escaneie a sua própria vitima.",
+                passos: [
+                    {
+                        titulo: "Subir o laboratório (no computador, fora do contêiner)",
+                        descricao: "Cria dois contêineres, 'atacante' e 'vitima', numa rede sem internet. Depois, entre no atacante.",
+                        tipo: "comandos",
+                        conteudo: ["docker compose -f aula-3/laboratorio/docker-compose.yml up -d --build", "docker exec -it atacante bash"]
+                    },
+                    {
+                        titulo: "A trava de segurança + o IP da vítima",
+                        descricao: "O ping deve FALHAR (rede isolada). Depois, descubra o IP por trás do nome 'vitima'.",
+                        tipo: "comandos",
+                        conteudo: ["ping -c 2 8.8.8.8", "getent hosts vitima"]
+                    },
+                    {
+                        titulo: "O reconhecimento com nmap",
+                        descricao: "Primeiro as portas abertas; depois o software e a versão de cada serviço.",
+                        tipo: "comandos",
+                        conteudo: ["nmap vitima", "nmap -sV -p 80,8000 vitima"]
+                    },
+                    {
+                        titulo: "O ataque visto pelo defensor (outro terminal)",
+                        descricao: "Entre na vítima e leia o log do site. Veja o IP do atacante e a assinatura do nmap.",
+                        tipo: "comandos",
+                        conteudo: ["docker exec -it vitima bash", "cat /var/log/acesso.log"]
+                    },
+                    {
+                        titulo: "O que você deve ver",
+                        descricao: "Duas portas abertas, o software/versão e os pedidos estranhos do nmap no log.",
+                        tipo: "saida",
+                        conteudo: ["80/tcp   open  http  SimpleHTTPServer 0.6 (Python 3.14.8)\n8000/tcp open  http  SimpleHTTPServer 0.6 (Python 3.14.8)\n\nno log: GET /nmaplowercheck... , GET /HNAP1 , GET /evox/about"]
+                    },
+                    {
+                        titulo: "A defesa: feche a porta e encerre",
+                        descricao: "Desligue o serviço da 8000 (na vítima), escaneie de novo (no atacante): a porta some. Depois encerre o lab.",
+                        tipo: "comandos",
+                        conteudo: [
+                            "kill $(ss -tlnp | grep \":8000\" | grep -o \"pid=[0-9]*\" | cut -d= -f2)",
+                            "nmap vitima",
+                            "docker compose -f aula-3/laboratorio/docker-compose.yml down"
+                        ]
+                    },
+                    {
+                        titulo: "Resposta do desafio",
+                        descricao: "Menos portas abertas = menos superfície de ataque.",
+                        tipo: "nota",
+                        conteudo: ["Portas: 80 e 8000, as duas SimpleHTTPServer/Python · Marca do scan: o IP do atacante + GET /nmaplowercheck, /HNAP1, /evox/about · Depois de fechar a 8000, ela some do scan."]
+                    }
+                ]
+            }
+        ];
+
+        // =====================================================================
+        //  Estado e lógica do passo a passo
+        // =====================================================================
+        const state = { currentRevealedStep: 0, totalSteps: 0 };
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+        }
+
+        function copyCommand(element) {
+            const text = element.dataset.cmd || '';
+            const done = () => showToast();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+            } else {
+                fallbackCopy(text, done);
+            }
+        }
+
+        function fallbackCopy(text, done) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                done();
+            } catch (err) {
+                console.error('Falha ao copiar:', err);
+            }
+        }
+
+        function renderNav() {
+            const nav = document.getElementById('activities-nav');
+            nav.innerHTML = '';
+            DESAFIOS.forEach((d, index) => {
+                const btn = document.createElement('button');
+                btn.className = "flex-shrink-0 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 font-medium py-2 px-4 rounded-full transition-colors focus:ring-2 focus:ring-emerald-500 outline-none activity-btn";
+                btn.innerHTML = `<i class="fa-solid ${d.icone} mr-2"></i>Desafio ${d.id}`;
+                btn.onclick = () => renderChallenge(index);
+                nav.appendChild(btn);
+            });
+        }
+
+        function stepContentHTML(passo) {
+            if (passo.tipo === 'comandos') {
+                return passo.conteudo.map(cmd => `
+                    <div class="command-block terminal-font text-sm mb-2" data-cmd="${escapeHtml(cmd)}" title="Clique para copiar">
+                        <span class="text-emerald-500 select-none">$</span> ${escapeHtml(cmd)}
+                        <i class="fa-regular fa-copy copy-icon absolute top-4 right-4 text-slate-500"></i>
+                    </div>`).join('');
+            }
+            if (passo.tipo === 'edicao') {
+                return passo.conteudo.map(ed => `
+                    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700 mb-2">
+                        <span class="text-xs text-slate-500 block mb-1"><i class="fa-regular fa-pen-to-square mr-1"></i>${escapeHtml(ed.arquivo)}</span>
+                        <code class="text-emerald-300 whitespace-pre-wrap terminal-font text-sm">${escapeHtml(ed.codigo)}</code>
+                    </div>`).join('');
+            }
+            if (passo.tipo === 'saida') {
+                return passo.conteudo.map(out => `
+                    <div class="output-block mb-2">
+                        <span class="text-xs text-slate-500 block mb-2"><i class="fa-solid fa-display mr-1"></i>O que você deve ver</span>
+                        <pre class="text-slate-300 whitespace-pre-wrap terminal-font text-sm leading-relaxed">${escapeHtml(out)}</pre>
+                    </div>`).join('');
+            }
+            // nota
+            return passo.conteudo.map(n => `
+                <div class="bg-emerald-500/10 border border-emerald-600/40 p-3 rounded-lg mb-2">
+                    <span class="text-xs text-emerald-400 font-bold block mb-1"><i class="fa-solid fa-circle-check mr-1"></i>GABARITO</span>
+                    <p class="text-slate-200 text-sm">${escapeHtml(n)}</p>
+                </div>`).join('');
+        }
+
+        function renderChallenge(index) {
+            const desafio = DESAFIOS[index];
+
+            document.querySelectorAll('.activity-btn').forEach((btn, i) => {
+                const on = (i === index);
+                btn.classList.toggle('bg-emerald-600', on);
+                btn.classList.toggle('text-white', on);
+                btn.classList.toggle('hover:bg-emerald-500', on);
+                btn.classList.toggle('bg-slate-800', !on);
+                btn.classList.toggle('text-emerald-400', !on);
+                btn.classList.toggle('hover:bg-slate-700', !on);
+            });
+
+            document.getElementById('challenge-title').innerHTML =
+                `<i class="fa-solid ${desafio.icone} text-emerald-500 mr-3"></i> ${desafio.titulo}`;
+            document.getElementById('challenge-desc').innerText = `Desafio ${desafio.id} de ${DESAFIOS.length}`;
+
+            const container = document.getElementById('challenge-container');
+            container.innerHTML = `
+                <div class="glass-panel rounded-xl p-6 border-l-4 border-emerald-500">
+                    <h3 class="text-lg font-bold mb-3 text-white"><i class="fa-solid fa-flag-checkered text-emerald-500 mr-2"></i>O enunciado</h3>
+                    <p class="text-slate-300 leading-relaxed">${desafio.enunciado}</p>
+                </div>`;
+
+            state.totalSteps = desafio.passos.length;
+
+            desafio.passos.forEach((passo, idx) => {
+                const n = idx + 1;
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="step-card glass-panel rounded-xl p-6 hidden" id="step${n}">
+                        <div class="flex items-start justify-between mb-4 gap-4">
+                            <div>
+                                <span class="bg-emerald-500/10 text-emerald-500 text-xs font-bold px-2 py-1 rounded mb-3 inline-block uppercase tracking-wider">Etapa ${n} de ${state.totalSteps}</span>
+                                <h3 class="text-xl font-bold mb-2">${escapeHtml(passo.titulo)}</h3>
+                            </div>
+                            <input type="checkbox" class="w-6 h-6 rounded border-slate-700 bg-slate-800 shrink-0 mt-1 accent-emerald-500 step-checkbox" data-step="step${n}" title="Marcar como feito">
+                        </div>
+                        <p class="text-slate-400 mb-4">${escapeHtml(passo.descricao)}</p>
+                        <div class="step-content">${stepContentHTML(passo)}</div>
+                    </div>`);
+            });
+
+            container.insertAdjacentHTML('beforeend', `
+                <div class="bg-emerald-500 text-emerald-950 p-4 rounded-xl flex items-center justify-between font-bold hidden mt-6" id="completion-message">
+                    <span><i class="fa-solid fa-trophy mr-2"></i> Missão cumprida! Desafio concluído.</span>
+                    <button id="restart-btn" class="text-xs underline hover:no-underline">Reiniciar</button>
+                </div>`);
+
+            bindDynamicEvents();
+            resetSteps();
+        }
+
+        function revealNextStep() {
+            if (state.currentRevealedStep >= state.totalSteps) return;
+            state.currentRevealedStep++;
+            const step = document.getElementById(`step${state.currentRevealedStep}`);
+            step.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                step.classList.add('revealed');
+                step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+
+            const btn = document.getElementById('reveal-btn');
+            if (state.currentRevealedStep >= state.totalSteps) {
+                btn.innerHTML = '<i class="fa-solid fa-check-circle mr-2"></i> Todas as etapas reveladas';
+                btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
+                btn.classList.add('bg-slate-700');
+                btn.disabled = true;
+                btn.style.cursor = 'default';
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-plus-circle mr-2"></i> Revelar etapa ${state.currentRevealedStep + 1} de ${state.totalSteps}`;
+            }
+        }
+
+        function checkCompletion() {
+            const checkboxes = Array.from(document.querySelectorAll('.step-checkbox'));
+            const allRevealed = state.currentRevealedStep === state.totalSteps;
+            const allChecked = allRevealed && checkboxes.every(c => c.checked);
+            const msg = document.getElementById('completion-message');
+            if (!msg) return;
+            msg.classList.toggle('hidden', !allChecked);
+            if (allChecked) msg.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleCheck(checkbox) {
+            const step = document.getElementById(checkbox.dataset.step);
+            if (step) {
+                step.classList.toggle('active', checkbox.checked);
+                checkCompletion();
+            }
+        }
+
+        function resetSteps() {
+            state.currentRevealedStep = 0;
+            document.querySelectorAll('.step-card').forEach(s => {
+                s.classList.add('hidden');
+                s.classList.remove('revealed', 'active');
+            });
+            document.querySelectorAll('.step-checkbox').forEach(c => c.checked = false);
+            const msg = document.getElementById('completion-message');
+            if (msg) msg.classList.add('hidden');
+            const btn = document.getElementById('reveal-btn');
+            if (btn) {
+                btn.disabled = false;
+                btn.style.cursor = 'pointer';
+                btn.classList.remove('bg-slate-700');
+                btn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+                btn.innerHTML = '<i class="fa-solid fa-play-circle mr-2 group-hover:scale-110 transition-transform"></i> Ver o passo a passo';
+            }
+        }
+
+        function bindDynamicEvents() {
+            document.querySelectorAll('.command-block').forEach(block => {
+                block.addEventListener('click', () => copyCommand(block));
+            });
+            document.querySelectorAll('.step-checkbox').forEach(cb => {
+                cb.addEventListener('change', () => toggleCheck(cb));
+            });
+            const restartBtn = document.getElementById('restart-btn');
+            if (restartBtn) restartBtn.addEventListener('click', resetSteps);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNav();
+            renderChallenge(0);
+            document.getElementById('reveal-btn').addEventListener('click', revealNextStep);
+        });
+    </script>
+</body>
+
+</html>

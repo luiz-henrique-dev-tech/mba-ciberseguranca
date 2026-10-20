@@ -1,0 +1,31 @@
+# Laboratório da Aula 3 · Parte 2 — ataques a partir do IP
+#
+# Dois contêineres numa rede ISOLADA (internal: true), que NÃO alcança a internet.
+# "atacante" e "vitima" só enxergam um ao outro. Nada aqui toca em máquinas reais.
+#
+# Subir:   docker compose -f aula-3/laboratorio/docker-compose.yml up -d --build
+# Entrar:  docker exec -it atacante bash     (noutro terminal: docker exec -it vitima bash)
+# Encerrar: docker compose -f aula-3/laboratorio/docker-compose.yml down
+
+services:
+  vitima:
+    build: ../..
+    container_name: vitima
+    networks: [laboratorio]
+    # Sobe dois "sites" (portas 80 e 8000) e registra os acessos em /var/log/acesso.log
+    command: >
+      bash -c "mkdir -p /site && cd /site &&
+      echo '<h1>Site da vitima</h1>' > index.html &&
+      python3 -m http.server 80 >> /var/log/acesso.log 2>&1 &
+      python3 -m http.server 8000 --directory /site >/dev/null 2>&1 &
+      tail -f /dev/null"
+
+  atacante:
+    build: ../..
+    container_name: atacante
+    networks: [laboratorio]
+    command: tail -f /dev/null
+
+networks:
+  laboratorio:
+    internal: true   # <- a rede não tem saída para a internet. É a trava de segurança do laboratório.

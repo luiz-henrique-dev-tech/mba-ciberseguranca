@@ -1,0 +1,11 @@
+services:
+  linux-env:
+    build: .
+    # Mesmo nome dos laboratórios das aulas anteriores: se o docker compose up acusar conflito, rode antes "docker rm -f linux"
+    container_name: linux
+    # Mapeia a pasta do projeto no seu computador para /workspace dentro do container
+    volumes:
+      - .:/workspace
+    # Definindo um tty e stdin_open evita que o container morra inesperadamente se o comando principal terminar
+    tty: true
+    stdin_open: true
