@@ -16,10 +16,16 @@ O MBA em Cibersegurança da USP/Esalq aborda fundamentos e práticas avançadas 
 ```
 mba-ciberseguranca/
 └── aulas/
-    └── fundamentos-linux/
-        └── mba-cyber-aula_1/
-            ├── atividades/        # Exercícios práticos da aula
-            ├── material/          # Material de apoio (HTML, quiz, referências)
+    ├── fundamentos-linux/
+    │   └── mba-cyber-aula_1/
+    │       ├── atividades/        # Exercícios práticos da aula
+    │       ├── material/          # Material de apoio (HTML, quiz, referências)
+    │       ├── Dockerfile         # Ambiente Kali Linux containerizado
+    │       └── docker-compose.yml
+    └── redes-para-ciberseguranca/
+        └── mba-cyber-aula-3-main/
+            ├── aula-3/            # Quiz, laboratório atacante x vítima e prática
+            ├── anotacoes.md       # Notas pessoais da aula
             ├── Dockerfile         # Ambiente Kali Linux containerizado
             └── docker-compose.yml
 ```
@@ -31,6 +37,7 @@ mba-ciberseguranca/
 | Módulo | Tema | Ambiente | Status |
 |---|---|---|---|
 | 1 | [Fundamentos de Linux](aulas/fundamentos-linux/mba-cyber-aula_1/README.md) | Docker (Kali Linux) | ✅ Concluído |
+| 2 | [Redes para Cibersegurança I](aulas/redes-para-ciberseguranca/mba-cyber-aula-3-main/README.md) — [anotações](aulas/redes-para-ciberseguranca/mba-cyber-aula-3-main/anotacoes.md) | Docker (Kali Linux) | ✅ Concluído |
 
 ## 🚀 Como usar
 
