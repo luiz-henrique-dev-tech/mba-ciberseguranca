@@ -30,9 +30,15 @@ dig +short www.nba.com       # versão resumida ("domain information groper")
 dig +short AAAA www.nba.com  # versão resumida, mas pedindo o endereço IPv6 (AAAA)
 ```
 
-**Resultado do `host www.nba.com`:**
-- `wwp.akamai.com` → cloud americana que guarda cópias do site da NBA.
+**Resultado do `host www.nba.com`** (reconferido, saída real):
+```
+www.nba.com is an alias for www.nba.com-v1.edgekey.net.
+www.nba.com-v1.edgekey.net is an alias for e8017.dscb.akamaiedge.net.
+e8017.dscb.akamaiedge.net has address 23.201.217.31
+```
+- A Akamai é uma cloud americana que guarda cópias do site da NBA, isso é o que torna `edgekey.net`/`akamaiedge.net` visível na cadeia de nomes.
 - **CDN** (Content Delivery Network) = rede de distribuição de conteúdo: são as cópias do site espalhadas pelo mundo que a gente acaba acessando.
+- `dig +short AAAA www.nba.com` volta vazio: o `www.nba.com` não publica endereço IPv6 (ainda só funciona por IPv4).
 
 **Cadeia de nomes (CNAME → A):**
 ```
@@ -41,6 +47,10 @@ www.nba.com-v1.edgekey.net     → CNAME
 e8017.dscb.akamaiedge.net      → Endereço (A)
 23.201.217.31                  → IP final
 ```
+
+> ⚠️ **Correção:** a versão original dessa nota tinha a pasta como `/workflow/etc`. Conferi dentro do contêiner e o caminho certo é só `/etc` (pasta padrão do Linux, não fica dentro de `/workspace`). O `/workspace` é só a pasta do projeto montada no contêiner; o `/etc` é do sistema operacional.
+
+> 💡 Dois comandos do material do professor que não chegamos a anotar, mas valem explorar: `dig +trace www.nba.com` (mostra a consulta subindo por cada servidor DNS até achar a resposta) e o conceito de **TTL** (tempo que a resposta do DNS fica guardada em cache antes de ser consultada de novo).
 
 ---
 
@@ -98,6 +108,8 @@ traceroute -m 15 www.nba.com
 
 > 📌 Ver [troubleshooting do traceroute no Docker](#️-troubleshooting-traceroute-no-docker), no fim deste arquivo.
 
+> ⚠️ **Pendência:** o objetivo da aula era descobrir três coisas: o meu gateway, os roteadores até a NBA e o dono da rede do site. Só os dois primeiros ficaram anotados. O comando que faltou é o `whois`, que consulta quem é o dono (a organização registrante) de um IP ou domínio, por exemplo `whois 23.201.217.31 | grep -i orgname`. O material do professor também cita o `mtr`, que é um traceroute contínuo (repete os saltos em loop e mostra a taxa de perda de cada um ao vivo).
+
 ---
 
 ## 4. HTTP e HTTPS: pedir a página, com segurança
@@ -129,16 +141,21 @@ curl -I -A "Mozilla/5.0" https://www.nba.com # mesma coisa, mas via HTTPS
 
 Sem `User-Agent` de navegador, `www.nba.com` devolveu `403 Forbidden`; com `-A "Mozilla/5.0"` via HTTP devolveu `301 Moved Permanently` (redireciona pra HTTPS); e via HTTPS devolveu `HTTP/2 200` (deu bom).
 
-**Cabeçalhos vistos no `curl -I` (pendente revisar o significado de cada um):**
-- [ ] `Mime-Version`
-- [ ] `Content-Type`
-- [ ] `Content-Length`
-- [ ] `Expires`
-- [ ] `Date`
-- [ ] `Connection`
-- [ ] `X-Frame-Options`
-- [ ] `X-XSS-Protection`
-- [ ] `X-Content-Type-Options`
+**Cabeçalhos vistos no `curl -I www.nba.com`** (reconferidos, com o significado de cada um):
+
+| Cabeçalho | O que significa |
+|---|---|
+| `Mime-Version: 1.0` | versão do padrão MIME usado pra descrever o tipo de conteúdo, cabeçalho antigo, hoje meio redundante com o `Content-Type` |
+| `Content-Type: text/html` | tipo de mídia do corpo da resposta, aqui diz que é uma página HTML |
+| `Content-Length: 363` | tamanho do corpo da resposta, em bytes |
+| `Expires` | data a partir da qual a resposta deve ser considerada velha pra fins de cache |
+| `Date` | data e hora em que o servidor gerou essa resposta |
+| `Connection: close` | avisa que o servidor vai fechar a conexão TCP depois dessa resposta, sem manter aberta pra próxima requisição |
+| `X-Frame-Options: sameorigin` | impede que a página seja carregada dentro de um `<iframe>` de outro site, proteção contra clickjacking |
+| `X-XSS-Protection: 1; mode=block` | liga um filtro antigo do navegador contra ataques de XSS refletido, hoje foi substituído pelo `Content-Security-Policy` |
+| `X-Content-Type-Options: nosniff` | impede que o navegador tente "adivinhar" o tipo real do conteúdo, evitando MIME sniffing usado em alguns ataques |
+
+> 💡 Material complementar do professor: `curl -v https://www.nba.com` mostra, além dos cabeçalhos, o handshake TLS e o certificado digital do site (quem emitiu, validade), que é o que garante que o `https://` não é só um cadeado de mentira.
 
 ---
 
@@ -173,6 +190,8 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 127.0.0.1 - - [21/Oct/2026 01:21:30] "GET / HTTP/1.1" 200 -
 ```
 
+> 💡 Material complementar do professor: `ss -tuln` lista as portas que a própria máquina está escutando (o `-u` inclui UDP, além do TCP) e `nc -l 8000` sobe um servidor cru na porta 8000. Com ele, dá pra ver a requisição HTTP exatamente como o navegador manda, cabeçalho por cabeçalho, sem nenhum servidor web interpretando nada.
+
 ---
 
 ## 🧪 Laboratório (atacante x vítima)
@@ -205,10 +224,10 @@ PORT     STATE SERVICE
 ```bash
 nmap -sV -p 80,8000 vitima
 ```
-- `nmap` → agrupa/organiza o escaneamento
-- `-s` → vê se a porta está aberta
-- `-sV` → descobre a versão do serviço
-- `-p 80,8000` → vai direto nas portas já conhecidas, sem escanear tudo
+- `nmap` (**n**etwork **map**per) → ferramenta de reconhecimento de rede: descobre hosts ativos e portas abertas.
+- a família de flags `-s*` define o **tipo de escaneamento** (`-sS` escaneamento SYN, não completa o aperto de mão TCP, mais discreto; `-sT` conexão TCP completa). O escaneamento simples (`nmap vitima`, sem flag de tipo) já usa um desses por padrão.
+- `-sV` → não é escaneamento de porta, é detecção de versão: tenta descobrir qual software e qual versão está rodando em cada porta aberta.
+- `-p 80,8000` → limita o escaneamento a essas portas específicas, em vez das ~1000 portas mais comuns que o `nmap` varre por padrão.
 
 Resultado:
 ```
@@ -245,3 +264,5 @@ traceroute www.nba.com        # Mac / Linux
 ## 📚 Material extra do professor
 
 - [Aula 3, material HTML completo](https://guilhermeonrails.github.io/aula-3-html/#p1-historia)
+
+A página segue a mesma viagem dos 5 tópicos acima (DNS, TCP/IP, roteadores, HTTP/HTTPS, cliente-servidor), mais um laboratório final, só que com alguns comandos extras que não chegaram a entrar nessa anotação: `dig +trace`, TTL de cache, `whois`, `mtr`, `curl -v` (certificado TLS), `ss -tuln` e `nc -l` (servidor cru pra ver a requisição HTTP bruta). Os destaques de cada um já foram marcados como "material complementar" nas seções correspondentes acima.
