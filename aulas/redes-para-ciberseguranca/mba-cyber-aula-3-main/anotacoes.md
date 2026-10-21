@@ -1,20 +1,20 @@
-# 📒 Anotações — Aula 3: Redes para Cibersegurança I
+# 📒 Anotações da aula 3: Redes para Cibersegurança I
 
 > Notas pessoais feitas durante a aula. Instruções de como subir o ambiente estão no [`README.md`](README.md) desta pasta.
 
 ## Resumo da aula
 
-1. **DNS** — descobrir o endereço do site
-2. **TCP/IP** — abrir uma conversa com o servidor
-3. **Roteadores** — atravessar o caminho até ele
-4. **HTTP e HTTPS** — pedir a página, com segurança
-5. **Cliente-servidor** — entender quem pede e quem responde
+1. **DNS**: descobrir o endereço do site
+2. **TCP/IP**: abrir uma conversa com o servidor
+3. **Roteadores**: atravessar o caminho até ele
+4. **HTTP e HTTPS**: pedir a página, com segurança
+5. **Cliente-servidor**: entender quem pede e quem responde
 
 ---
 
-## 1. DNS — descobrir o endereço do site
+## 1. DNS: descobrir o endereço do site
 
-- 🔗 [submarinecablemap.com](https://www.submarinecablemap.com/) — site pra ver o fluxo dos cabos de rede ao redor do mundo.
+- 🔗 [submarinecablemap.com](https://www.submarinecablemap.com/): site pra ver o fluxo dos cabos de rede ao redor do mundo.
 
 **Dentro do contêiner:**
 - `/etc/` → pasta que sempre guarda as configurações que o sistema está usando.
@@ -32,7 +32,7 @@ dig +short AAAA www.nba.com  # versão resumida, mas pedindo o endereço IPv6 (A
 
 **Resultado do `host www.nba.com`:**
 - `wwp.akamai.com` → cloud americana que guarda cópias do site da NBA.
-- **CDN** (Content Delivery Network) = rede de distribuição de conteúdo — são as cópias do site espalhadas pelo mundo que a gente acaba acessando.
+- **CDN** (Content Delivery Network) = rede de distribuição de conteúdo: são as cópias do site espalhadas pelo mundo que a gente acaba acessando.
 
 **Cadeia de nomes (CNAME → A):**
 ```
@@ -44,7 +44,7 @@ e8017.dscb.akamaiedge.net      → Endereço (A)
 
 ---
 
-## 2. TCP/IP — abrir uma conversa com o servidor
+## 2. TCP/IP: abrir uma conversa com o servidor
 
 - **IP** (Internet Protocol) → endereça e entrega cada pacote.
 - **TCP** (Transmission Control Protocol) → confere a ordem dos pacotes e reenvia o que se perdeu.
@@ -67,14 +67,14 @@ ss -tn                     # lista as conexões TCP ativas da máquina
 
 ---
 
-## 3. Roteadores — atravessar o caminho até ele
+## 3. Roteadores: atravessar o caminho até ele
 
 - **Roteador** liga redes entre si.
 - **Gateway** = o primeiro roteador no caminho.
 - Cada entrega de um roteador ao próximo é um **salto (hop)**.
 
 ```
-Casa (roteador Wi-Fi) → Provedor (Vivo, Claro) → Redes internacionais → Akamai (CDN da NBA)
+Casa (roteador Wi-Fi) >> Provedor (Vivo, Claro) >> Redes internacionais >> Akamai (CDN da NBA)
 ```
 
 - **Ponto de troca de tráfego no Brasil:** [ix.br](https://ix.br)
@@ -100,9 +100,9 @@ traceroute -m 15 www.nba.com
 
 ---
 
-## 4. HTTP e HTTPS — pedir a página, com segurança
+## 4. HTTP e HTTPS: pedir a página, com segurança
 
-**HTTP** é a "língua" da web — arquitetura cliente-servidor.
+**HTTP** é a "língua" da web (arquitetura cliente-servidor).
 
 **Códigos de status:**
 
@@ -114,9 +114,9 @@ traceroute -m 15 www.nba.com
 | 404 | página não existe |
 | 500 | erro no servidor |
 
-- 🐱 [http.cat](https://http.cat/) — cada código com um gato
-- 🐶 [http.dog](https://http.dog/) — cada código com um cachorro
-- ⭐ Vale a pena estudar as **categorias** de status (2xx, 3xx, 4xx, 5xx) — ajudam a entender rápido o que aconteceu numa requisição.
+- 🐱 [http.cat](https://http.cat/): cada código com um gato
+- 🐶 [http.dog](https://http.dog/): cada código com um cachorro
+- ⭐ Vale a pena estudar as **categorias** de status (2xx, 3xx, 4xx, 5xx), ajudam a entender rápido o que aconteceu numa requisição.
 
 **HTTPS = HTTP + cadeado.** Sem criptografia (HTTP puro), dava pra ver o conteúdo de um pacote fragmentado; o HTTPS garante que o site é quem diz ser e que a conversa com o servidor é criptografada.
 
@@ -142,7 +142,7 @@ Sem `User-Agent` de navegador, `www.nba.com` devolveu `403 Forbidden`; com `-A "
 
 ---
 
-## 5. Cliente-servidor — entender quem pede e quem responde
+## 5. Cliente-servidor: entender quem pede e quem responde
 
 Estrutura criada para a prática:
 
@@ -177,14 +177,14 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 
 ## 🧪 Laboratório (atacante x vítima)
 
-> ⚠️ Só escanear a própria `vitima` — escanear sistemas de terceiros sem autorização é crime.
+> ⚠️ Só escanear a própria `vitima`. Escanear sistemas de terceiros sem autorização é crime.
 
 ```bash
 docker compose -f aula-3/laboratorio/docker-compose.yml up -d --build
 docker ps
 docker exec -it atacante bash
 
-ping -c 2 8.8.8.8        # deve falhar — rede isolada, sem internet
+ping -c 2 8.8.8.8        # deve falhar, rede isolada, sem internet
 getent hosts vitima      # descobre o IP da vítima
 ```
 
@@ -216,7 +216,7 @@ Resultado:
 8000/tcp open  http  SimpleHTTPServer 0.6 (Python 3.14.8)
 ```
 
-> 💡 Com a versão exata do serviço em mãos, o próximo passo seria pesquisar `"SimpleHTTPServer 0.6 vulnerability"` ou `"python 3.14.8 falhas ou vulnerabilidades"` — é assim que um reconhecimento vira o ponto de partida pra buscar uma vulnerabilidade conhecida.
+> 💡 Com a versão exata do serviço em mãos, o próximo passo seria pesquisar `"SimpleHTTPServer 0.6 vulnerability"` ou `"python 3.14.8 falhas ou vulnerabilidades"`. É assim que um reconhecimento vira o ponto de partida pra buscar uma vulnerabilidade conhecida.
 
 ---
 
@@ -244,4 +244,4 @@ traceroute www.nba.com        # Mac / Linux
 
 ## 📚 Material extra do professor
 
-- [Aula 3 — material HTML completo](https://guilhermeonrails.github.io/aula-3-html/#p1-historia)
+- [Aula 3, material HTML completo](https://guilhermeonrails.github.io/aula-3-html/#p1-historia)

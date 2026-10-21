@@ -37,7 +37,7 @@ mba-ciberseguranca/
 | Módulo | Tema | Ambiente | Status |
 |---|---|---|---|
 | 1 | [Fundamentos de Linux](aulas/fundamentos-linux/mba-cyber-aula_1/README.md) | Docker (Kali Linux) | ✅ Concluído |
-| 2 | [Redes para Cibersegurança I](aulas/redes-para-ciberseguranca/mba-cyber-aula-3-main/README.md) — [anotações](aulas/redes-para-ciberseguranca/mba-cyber-aula-3-main/anotacoes.md) | Docker (Kali Linux) | ✅ Concluído |
+| 2 | [Redes para Cibersegurança I](aulas/redes-para-ciberseguranca/mba-cyber-aula-3-main/README.md) ([anotações](aulas/redes-para-ciberseguranca/mba-cyber-aula-3-main/anotacoes.md)) | Docker (Kali Linux) | ✅ Concluído |
 
 ## 🚀 Como usar
 
